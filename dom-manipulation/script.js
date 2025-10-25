@@ -7,6 +7,16 @@ const quotes = [
   { quote: "The most difficult thing is the decision to act, the rest is merely tenacity.", category: "inspiration" },
   { quote: "So many books, so little time.", category: "wisdom" }
 ];
+function loadQuotes() {
+      const stored = localStorage.getItem('quotes');
+      if (stored) quotes = JSON.parse(stored);
+    }
+
+function saveQuotes() {
+    localStorage.setitem('quotes', JSON.stringify(saveQuotes))
+
+}
+
 
 // Function: show a random quote
 function showRandomQuote() {
@@ -55,12 +65,41 @@ function addQuote() {
     document.getElementById('newQuoteText').value = "";
     document.getElementById('newQuoteCategory').value = "";
 
+    
     // Show a random quote after adding
     showRandomQuote();
+    saveQuotes();
   } else {
     alert("Please fill in both fields before adding a quote.");
   }
 }
+
+function saveLastViewed (quote) {
+    sessionStorage.setItem('lastquote', JSON.stringify(quote));
+}
+function getLastViewed() {
+    const last =sessionStorage.getItem('lastQuote');
+    return last? JSON.parse(last) : null;
+}
+function exportToJsonFile () {
+    const data = JSON.stringify(quotes, null, 2);
+    const blob = new blob([data], {type: "application/json"});
+    const url = url.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = "quotes.json"
+    link.click();
+
+}
+function importFromJsonFIle(event) {
+    const fileReader= new FileReader();
+    fileReader.onload = function(event) {
+        const importedQuotes = JSON.parse(event.target.results);
+        quotes.push(...importedQuotes);
+        saveQuotes();
+    }
+    fileReadert.readAsText(event.target.files[0]);
+}
+loadQuotes();
 
 // Event listener for "Show New Quote" button
 document.getElementById('newQuote').addEventListener('click', showRandomQuote);
